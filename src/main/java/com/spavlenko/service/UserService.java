@@ -1,6 +1,7 @@
 package com.spavlenko.service;
 
 import com.spavlenko.domain.User;
+import com.spavlenko.exception.ConstraintsViolationException;
 import com.spavlenko.exception.EntityNotFoundException;
 
 /**
@@ -22,4 +23,14 @@ public interface UserService {
      */
     User find(Long userId) throws EntityNotFoundException;
 
+    /**
+     * Creates new user
+     * 
+     * @param user
+     *            user to create
+     * @return user
+     * @throws ConstraintsViolationException
+     *             when some constraints are violated
+     */
+    User create(User user) throws ConstraintsViolationException;
 }

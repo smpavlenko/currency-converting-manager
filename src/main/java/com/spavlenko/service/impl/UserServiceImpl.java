@@ -1,10 +1,12 @@
 package com.spavlenko.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.spavlenko.dao.UserRepository;
 import com.spavlenko.domain.User;
+import com.spavlenko.exception.ConstraintsViolationException;
 import com.spavlenko.exception.EntityNotFoundException;
 import com.spavlenko.service.UserService;
 
@@ -26,6 +28,18 @@ public class UserServiceImpl implements UserService {
             throw new EntityNotFoundException("Could not find user with id: " + userId);
         }
         return userDO;
+    }
+
+    @Override
+    public User create(User user) throws ConstraintsViolationException {
+
+        User createdPlayer = null;
+        try {
+            createdPlayer = userRepository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new ConstraintsViolationException(e.getMessage());
+        }
+        return createdPlayer;
     }
 
 }

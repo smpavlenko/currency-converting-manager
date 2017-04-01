@@ -23,6 +23,7 @@ public interface UserMapper {
     /**
      * UserDto -> User mapping
      */
+    @Mapping(target = "username", source = "userName")
     User toUser(UserDto userDto);
 
 }

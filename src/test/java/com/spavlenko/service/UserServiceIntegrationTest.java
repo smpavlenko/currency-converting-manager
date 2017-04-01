@@ -1,6 +1,7 @@
 package com.spavlenko.service;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.junit.Rule;
@@ -13,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.spavlenko.CurrencyConverterApplication;
 import com.spavlenko.domain.User;
+import com.spavlenko.exception.ConstraintsViolationException;
 import com.spavlenko.exception.EntityNotFoundException;
 
 /**
@@ -50,6 +52,30 @@ public class UserServiceIntegrationTest {
 
         // when
         userService.find(1000L);
+    }
+
+    @Test
+    public void create() throws Exception {
+        // given
+        User user = new User("test01", "pass01");
+
+        // when
+        User resultUser = userService.create(user);
+
+        // then
+        assertThat(resultUser.getUsername(), equalTo("test01"));
+        assertThat(resultUser.getPassword(), equalTo("pass01"));
+        assertThat(resultUser.getId(), notNullValue());
+    }
+
+    @Test
+    public void create_exception() throws Exception {
+        // given
+        expectedException.expect(ConstraintsViolationException.class);
+        User user = new User("test1", "test1");
+
+        // when
+        userService.create(user);
     }
 
 }

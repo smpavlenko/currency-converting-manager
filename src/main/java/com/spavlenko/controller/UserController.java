@@ -62,8 +62,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto createUser(@Valid @RequestBody UserDto userDto) throws ConstraintsViolationException {
-        // TODO to implement
-        return null;
+        return userMapper.toUserDto(userService.create(userMapper.toUser(userDto)));
     }
 
 }

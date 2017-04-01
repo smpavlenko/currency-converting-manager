@@ -1,6 +1,7 @@
 package com.spavlenko.controller;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.json.JSONObject;
@@ -47,6 +48,38 @@ public class UserControllerAcceptanceTest {
         JSONObject json = new JSONObject(body);
         assertThat(json.get("status"), equalTo(400));
         assertThat(json.get("exception"), equalTo("com.spavlenko.exception.EntityNotFoundException"));
+    }
+
+    @Test
+    public void create() throws Exception {
+        // given
+        UserDto user = new UserDto();
+        user.setUserName("test001");
+        user.setPassword("pass001");
+
+        // when
+        UserDto resultUser = this.restTemplate.postForObject("/v1/users", user, UserDto.class);
+
+        // then
+        assertThat(resultUser.getUserName(), equalTo("test001"));
+        assertThat(resultUser.getPassword(), equalTo("pass001"));
+        assertThat(resultUser.getId(), notNullValue());
+    }
+
+    @Test
+    public void create_exception() throws Exception {
+        // given
+        UserDto user = new UserDto();
+        user.setUserName("test1");
+        user.setPassword("test1");
+
+        // when
+        String body = this.restTemplate.postForObject("/v1/users", user, String.class);
+
+        // then
+        JSONObject json = new JSONObject(body);
+        assertThat(json.get("status"), equalTo(400));
+        assertThat(json.get("exception"), equalTo("com.spavlenko.exception.ConstraintsViolationException"));
     }
 
 }
