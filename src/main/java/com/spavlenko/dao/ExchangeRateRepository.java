@@ -1,7 +1,10 @@
 package com.spavlenko.dao;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 
+import com.spavlenko.domain.Currency;
 import com.spavlenko.domain.ExchangeRate;
 
 /**
@@ -12,4 +15,5 @@ import com.spavlenko.domain.ExchangeRate;
  */
 public interface ExchangeRateRepository extends CrudRepository<ExchangeRate, Long> {
 
+    List<ExchangeRate> findByCurrencyFromAndCurrencyToOrderByDateCreated(Currency currencyFrom, Currency currencyTo);
 }

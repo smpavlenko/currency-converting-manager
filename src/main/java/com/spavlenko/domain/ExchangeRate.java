@@ -5,11 +5,12 @@ import java.time.ZonedDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -34,18 +35,20 @@ public class ExchangeRate {
     private ZonedDateTime dateCreated = ZonedDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "user")
+    @JoinColumn(name = "user", nullable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull(message = "From currency can not be null!")
-    private Currency from;
+    private Currency currencyFrom;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull(message = "To currency can not be null!")
-    private Currency to;
+    private Currency currencyTo;
 
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 6, scale = 5)
     @NotNull(message = "Exchange rate can not be null!")
     private BigDecimal rate;
 
@@ -73,20 +76,20 @@ public class ExchangeRate {
         this.user = user;
     }
 
-    public Currency getFrom() {
-        return from;
+    public Currency getCurrencyFrom() {
+        return currencyFrom;
     }
 
-    public void setFrom(Currency from) {
-        this.from = from;
+    public void setCurrencyFrom(Currency currencyFrom) {
+        this.currencyFrom = currencyFrom;
     }
 
-    public Currency getTo() {
-        return to;
+    public Currency getCurrencyTo() {
+        return currencyTo;
     }
 
-    public void setTo(Currency to) {
-        this.to = to;
+    public void setCurrencyTo(Currency currencyTo) {
+        this.currencyTo = currencyTo;
     }
 
     public BigDecimal getRate() {

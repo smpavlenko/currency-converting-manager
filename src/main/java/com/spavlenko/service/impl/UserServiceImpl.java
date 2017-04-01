@@ -14,6 +14,7 @@ import com.spavlenko.service.UserService;
  * Default user service implementation
  * 
  * @author sergii.pavlenko
+ * @since Apr 1, 2017
  */
 @Service
 public class UserServiceImpl implements UserService {

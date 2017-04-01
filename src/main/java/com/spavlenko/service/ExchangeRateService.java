@@ -5,6 +5,7 @@ import java.util.List;
 import com.spavlenko.domain.Currency;
 import com.spavlenko.domain.ExchangeRate;
 import com.spavlenko.domain.User;
+import com.spavlenko.exception.ConstraintsViolationException;
 
 /**
  * Exchange Rate service
@@ -20,8 +21,10 @@ public interface ExchangeRateService {
      * @param rate
      *            exchange rate
      * @return created exchange rate
+     * @throws ConstraintsViolationException
+     *             when some constraints are violated
      */
-    ExchangeRate create(ExchangeRate rate);
+    ExchangeRate create(ExchangeRate rate) throws ConstraintsViolationException;
 
     /**
      * Gets recent exchange rates for user
