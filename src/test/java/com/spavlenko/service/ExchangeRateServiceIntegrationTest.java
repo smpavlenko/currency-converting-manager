@@ -10,12 +10,15 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.spavlenko.CurrencyConverterApplication;
@@ -34,6 +37,9 @@ import com.spavlenko.exception.ConstraintsViolationException;
 @SpringBootTest(classes = CurrencyConverterApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ExchangeRateServiceIntegrationTest {
 
+    @MockBean
+    private RateGatewayService rateGatewayService;
+
     @Autowired
     private ExchangeRateService exchangeRateService;
 
@@ -43,22 +49,22 @@ public class ExchangeRateServiceIntegrationTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    @Before
+    public void setUp() {
+        Mockito.when(rateGatewayService.retrieveExchangeRate(Mockito.any(Currency.class), Mockito.any(Currency.class)))
+                .thenReturn(BigDecimal.valueOf(1.1d));
+    }
+
     @Test
     public void create() throws Exception {
-        // given
-        ExchangeRate exchangeRate = new ExchangeRate();
-        exchangeRate.setCurrencyFrom(Currency.EUR);
-        exchangeRate.setCurrencyTo(Currency.USD);
-        exchangeRate.setRate(BigDecimal.ONE);
-        exchangeRate.setUser(userService.find(1L));
 
         // when
-        ExchangeRate resultExchangeRate = exchangeRateService.create(exchangeRate);
+        ExchangeRate resultExchangeRate = exchangeRateService.create(userService.find(1L), Currency.EUR, Currency.USD);
 
         // then
         assertThat(resultExchangeRate.getCurrencyFrom(), equalTo(Currency.EUR));
         assertThat(resultExchangeRate.getCurrencyTo(), equalTo(Currency.USD));
-        assertThat(resultExchangeRate.getRate(), equalTo(BigDecimal.ONE));
+        assertThat(resultExchangeRate.getRate(), equalTo(BigDecimal.valueOf(1.1d)));
         assertThat(resultExchangeRate.getUser(), notNullValue());
         assertThat(resultExchangeRate.getId(), notNullValue());
     }
@@ -67,13 +73,9 @@ public class ExchangeRateServiceIntegrationTest {
     public void create_exception() throws Exception {
         // given
         expectedException.expect(ConstraintsViolationException.class);
-        ExchangeRate exchangeRate = new ExchangeRate();
-        exchangeRate.setCurrencyFrom(Currency.EUR);
-        exchangeRate.setCurrencyTo(Currency.USD);
-        exchangeRate.setRate(BigDecimal.ONE);
 
         // when
-        exchangeRateService.create(exchangeRate);
+        exchangeRateService.create(null, Currency.EUR, Currency.USD);
     }
 
     @Test
@@ -81,6 +83,7 @@ public class ExchangeRateServiceIntegrationTest {
         // when
         List<ExchangeRate> resultRates = exchangeRateService.find(Currency.AUD, Currency.GBP);
 
+        // then
         assertThat(resultRates, hasSize(2));
         assertThat(resultRates.stream().map(ExchangeRate::getCurrencyFrom).collect(Collectors.toSet()), hasSize(1));
         assertThat(resultRates.stream().map(ExchangeRate::getCurrencyTo).collect(Collectors.toSet()), hasSize(1));
@@ -90,6 +93,24 @@ public class ExchangeRateServiceIntegrationTest {
         List<ZonedDateTime> dates = resultRates.stream().map(ExchangeRate::getDateCreated).collect(Collectors.toList());
         assertThat(dates, hasSize(2));
         assertThat(dates.get(0).isBefore(dates.get(1)), equalTo(true));
+    }
+
+    @Test
+    public void find_same() throws Exception {
+        // when
+        List<ExchangeRate> resultRates = exchangeRateService.find(Currency.AUD, Currency.AUD);
+
+        assertThat(resultRates, hasSize(0));
+    }
+
+    @Test
+    public void getRecent() throws Exception {
+        // when
+        List<ExchangeRate> resultRates = exchangeRateService.getRecent(userService.find(2L));
+
+        // then
+        assertThat(resultRates, hasSize(2));
 
     }
+
 }

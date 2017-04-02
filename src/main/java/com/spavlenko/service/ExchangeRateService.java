@@ -16,15 +16,19 @@ import com.spavlenko.exception.ConstraintsViolationException;
 public interface ExchangeRateService {
 
     /**
-     * Creates new exchange rate
+     * Creates and returns new exchange rate
      * 
-     * @param rate
-     *            exchange rate
+     * @param user
+     *            user which creates request
+     * @param from
+     *            from currency
+     * @param to
+     *            to currency
      * @return created exchange rate
      * @throws ConstraintsViolationException
      *             when some constraints are violated
      */
-    ExchangeRate create(ExchangeRate rate) throws ConstraintsViolationException;
+    ExchangeRate create(User user, Currency from, Currency to) throws ConstraintsViolationException;
 
     /**
      * Gets recent exchange rates for user

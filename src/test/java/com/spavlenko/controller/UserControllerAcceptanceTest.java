@@ -9,11 +9,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.spavlenko.CurrencyConverterApplication;
 import com.spavlenko.dto.UserDto;
+import com.spavlenko.service.RateGatewayService;
 
 /**
  * Acceptance tests for UserController
@@ -24,6 +26,9 @@ import com.spavlenko.dto.UserDto;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = CurrencyConverterApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class UserControllerAcceptanceTest {
+
+    @MockBean
+    private RateGatewayService rateGatewayService;
 
     @Autowired
     private TestRestTemplate restTemplate;

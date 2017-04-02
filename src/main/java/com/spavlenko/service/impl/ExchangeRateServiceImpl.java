@@ -1,5 +1,6 @@
 package com.spavlenko.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import com.spavlenko.domain.ExchangeRate;
 import com.spavlenko.domain.User;
 import com.spavlenko.exception.ConstraintsViolationException;
 import com.spavlenko.service.ExchangeRateService;
+import com.spavlenko.service.RateGatewayService;
 
 /**
  * Default exchange rate service implementation
@@ -24,11 +26,21 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
     @Autowired
     private ExchangeRateRepository exchangeRateRepository;
 
+    @Autowired
+    private RateGatewayService rateGatewayService;
+
     @Override
-    public ExchangeRate create(ExchangeRate rate) throws ConstraintsViolationException {
+    public ExchangeRate create(User user, Currency from, Currency to) throws ConstraintsViolationException {
+
+        BigDecimal rate = rateGatewayService.retrieveExchangeRate(from, to);
+        ExchangeRate exchangeRate = new ExchangeRate();
+        exchangeRate.setUser(user);
+        exchangeRate.setCurrencyFrom(from);
+        exchangeRate.setCurrencyTo(to);
+        exchangeRate.setRate(rate);
         ExchangeRate createdRate = null;
         try {
-            createdRate = exchangeRateRepository.save(rate);
+            createdRate = exchangeRateRepository.save(exchangeRate);
         } catch (DataIntegrityViolationException e) {
             throw new ConstraintsViolationException(e.getMessage());
         }
@@ -37,8 +49,7 @@ public class ExchangeRateServiceImpl implements ExchangeRateService {
 
     @Override
     public List<ExchangeRate> getRecent(User user) {
-        // TODO Auto-generated method stub
-        return null;
+        return exchangeRateRepository.findTop5ByUserOrderByDateCreatedDesc(user);
     }
 
     @Override

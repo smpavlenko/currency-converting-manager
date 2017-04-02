@@ -10,6 +10,7 @@ import com.spavlenko.dto.UserDto;
  * User Mapper
  * 
  * @author sergii.pavlenko
+ * @since Apr 1, 2017
  */
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -24,6 +25,7 @@ public interface UserMapper {
      * UserDto -> User mapping
      */
     @Mapping(target = "username", source = "userName")
+    @Mapping(target = "dateCreated", ignore = false)
     User toUser(UserDto userDto);
 
 }
