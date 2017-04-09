@@ -2,7 +2,7 @@ package com.spavlenko.controller;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 import org.json.JSONObject;
 import org.junit.Test;

@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.spavlenko.controller.mapper.ExchangeRateMapper;
 import com.spavlenko.domain.Currency;
+import com.spavlenko.domain.ExchangeRate;
 import com.spavlenko.domain.User;
 import com.spavlenko.dto.ExchangeRateDto;
+import com.spavlenko.exception.ConstraintsViolationException;
 import com.spavlenko.exception.EntityNotFoundException;
 import com.spavlenko.service.ExchangeRateService;
 import com.spavlenko.service.UserService;
@@ -40,10 +42,10 @@ public class ExchangeRatesController {
 
     @GetMapping("/{userId}/{from}/{to}")
     public ExchangeRateDto createAndGetRate(@Valid @PathVariable Long userId, @Valid @PathVariable Currency from,
-            @Valid @PathVariable Currency to) throws EntityNotFoundException {
+            @Valid @PathVariable Currency to) throws EntityNotFoundException, ConstraintsViolationException {
         User user = userService.find(userId);
-        // TODO to implement
-        return null;
+        ExchangeRate rate = exchangeRateService.create(user, from, to);
+        return exchangeRateMapper.toExchangeRateDto(rate);
     }
 
     @GetMapping("/{userId}")
