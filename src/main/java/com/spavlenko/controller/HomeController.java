@@ -33,12 +33,13 @@ public class HomeController {
     @RequestMapping(value = { "/currency-converter" }, method = RequestMethod.GET)
     public String currencyConverter(Model model, HttpServletRequest request) {
         User currentUser = null; // TODO
-        Long curentUserId = 1L;
+        Long curentUserId = 2L;
         UriComponents url = ServletUriComponentsBuilder.fromServletMapping(request).path("/v1/rates/")
                 .path(curentUserId.toString()).build();
         List<ExchangeRateDto> exchangeRateList = template.getForObject(url.toString(), List.class);
 
         // TODO to implement
+        model.addAttribute("recentExchanges", exchangeRateList);
         return "currency-converter";
     }
 

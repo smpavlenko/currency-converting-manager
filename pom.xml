@@ -6,7 +6,7 @@
 	<groupId>com.pavlenko</groupId>
 	<artifactId>currency-converting-manager</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 
 	<name>Currency Converter</name>
 	<description>The application for converting multiple currencies from one to another</description>
@@ -22,6 +22,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
 		<!-- dependency versions -->
+		<org.mapstruct.mapstruct-jdk8.version>1.0.0.Final</org.mapstruct.mapstruct-jdk8.version>
 		<io.springfox.springfox-swagger2>2.3.1</io.springfox.springfox-swagger2>
 		<io.springfox.springfox-swagger-ui>2.3.1</io.springfox.springfox-swagger-ui>
 	</properties>
@@ -55,7 +56,7 @@
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct-jdk8</artifactId>
-			<version>1.0.0.Final</version>
+			<version>${org.mapstruct.mapstruct-jdk8.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -88,6 +89,12 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>${io.springfox.springfox-swagger-ui}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>javax.servlet</groupId>
