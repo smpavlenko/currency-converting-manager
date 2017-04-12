@@ -2,6 +2,7 @@ package com.spavlenko.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 
@@ -42,7 +44,7 @@ public class HomeController {
             throws ClientProtocolException, IOException {
         // TODO get real user id
         Long curentUserId = 2L;
-        
+
         UriComponents url = ServletUriComponentsBuilder.fromServletMapping(request).path("/v1/rates/")
                 .path(curentUserId.toString()).build();
 
@@ -65,13 +67,12 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model model, String error, String logout) {
-        // TODO to implement
-        if (error != null)
-            model.addAttribute("error", "Your username or password are invalid.");
-
-        if (logout != null)
-            model.addAttribute("message", "You have been logged out successfully.");
+    public String login(Model model, @RequestParam(required = false) String error,
+            @RequestParam(required = false) String logout) {
+        Optional.ofNullable(error)
+                .ifPresent(t -> model.addAttribute("error", "Your username or password are invalid."));
+        Optional.ofNullable(logout)
+                .ifPresent(t -> model.addAttribute("message", "You have been logged out successfully."));
 
         return "login";
     }
