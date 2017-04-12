@@ -12,4 +12,13 @@ import com.spavlenko.domain.User;
  */
 public interface UserRepository extends CrudRepository<User, Long> {
 
+    /**
+     * Gets user by user name
+     * 
+     * @param username
+     *            user name
+     * @return found User
+     */
+    User findByUsername(String username);
+
 }
