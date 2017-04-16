@@ -17,8 +17,12 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,13 +30,34 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spavlenko.controller.mapper.UserMapper;
+import com.spavlenko.controller.request.UserRequest;
+import com.spavlenko.domain.User;
 import com.spavlenko.dto.ExchangeRateDto;
+import com.spavlenko.dto.UserDto;
+import com.spavlenko.exception.ConstraintsViolationException;
+import com.spavlenko.exception.EntityNotFoundException;
+import com.spavlenko.service.SecurityService;
+import com.spavlenko.service.UserService;
+import com.spavlenko.service.UserValidator;
 
 import springfox.documentation.annotations.ApiIgnore;
 
 @Controller
 @ApiIgnore
 public class HomeController {
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private SecurityService securityService;
+
+    @Autowired
+    private UserValidator userValidator;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @RequestMapping("/")
     public String home() {
@@ -41,9 +66,10 @@ public class HomeController {
 
     @RequestMapping(value = { "/currency-converter" }, method = RequestMethod.GET)
     public String currencyConverter(Model model, HttpServletRequest request)
-            throws ClientProtocolException, IOException {
-        // TODO get real user id
-        Long curentUserId = 2L;
+            throws ClientProtocolException, IOException, EntityNotFoundException {
+
+        User user = securityService.getAuthenticatedUser();
+        Long curentUserId = user.getId();
 
         UriComponents url = ServletUriComponentsBuilder.fromServletMapping(request).path("/v1/rates/")
                 .path(curentUserId.toString()).build();
@@ -75,6 +101,28 @@ public class HomeController {
                 .ifPresent(t -> model.addAttribute("message", "You have been logged out successfully."));
 
         return "login";
+    }
+
+    @RequestMapping(value = "/registration", method = RequestMethod.GET)
+    public String registration(Model model) {
+        model.addAttribute("user", new UserRequest());
+
+        return "registration";
+    }
+
+    @RequestMapping(value = "/registration", method = RequestMethod.POST)
+    public String registration(@ModelAttribute("user") UserRequest user, @RequestParam String passwordConfirm,
+            BindingResult bindingResult) throws ConstraintsViolationException, EntityNotFoundException {
+        userValidator.validate(user, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            return "registration";
+        }
+
+        userService.create(userMapper.toUser(user));
+        securityService.login(user.getUserName(), user.getPassword());
+
+        return "redirect:/currency-converter";
     }
 
 }

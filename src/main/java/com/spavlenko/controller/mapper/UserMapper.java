@@ -3,6 +3,7 @@ package com.spavlenko.controller.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import com.spavlenko.controller.request.UserRequest;
 import com.spavlenko.domain.User;
 import com.spavlenko.dto.UserDto;
 
@@ -27,5 +28,12 @@ public interface UserMapper {
     @Mapping(target = "username", source = "userName")
     @Mapping(target = "dateCreated", ignore = false)
     User toUser(UserDto userDto);
+
+    /**
+     * UserRequest -> User mapping
+     */
+    @Mapping(target = "username", source = "userName")
+    @Mapping(target = "dateCreated", ignore = false)
+    User toUser(UserRequest userRequest);
 
 }

@@ -1,26 +1,13 @@
 package com.spavlenko.service;
 
-import org.springframework.validation.Errors;
-
-import com.spavlenko.dto.UserDto;
+import org.springframework.validation.Validator;
 
 /**
- * User validator
+ * User validator. Marker interface
  * 
  * @author sergii.pavlenko
  * @since Apr 16, 2017
  */
-public interface UserValidator {
+public interface UserValidator extends Validator {
 
-    /**
-     * Validates user. Adds errors to errors attribute
-     * 
-     * @param user
-     *            user dto
-     * @param passwordConfirm
-     *            password confirm
-     * @param errors
-     *            errors attribute
-     */
-    void validate(UserDto user, String passwordConfirm, Errors errors);
 }
