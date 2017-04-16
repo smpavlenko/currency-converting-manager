@@ -43,4 +43,9 @@ public class UserServiceImpl implements UserService {
         return createdPlayer;
     }
 
+    @Override
+    public User find(String userName) {
+        return userRepository.findByUsername(userName);
+    }
+
 }

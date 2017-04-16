@@ -24,6 +24,15 @@ public interface UserService {
     User find(Long userId) throws EntityNotFoundException;
 
     /**
+     * Gets user by user name
+     * 
+     * @param userName
+     *            user name
+     * @return user (null if user not found)
+     */
+    User find(String userName);
+
+    /**
      * Creates new user
      * 
      * @param user
