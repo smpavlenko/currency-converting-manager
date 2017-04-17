@@ -120,3 +120,19 @@ body {
     margin-bottom: 15px
 }
 
+a {
+    color: #337ab7;
+    text-decoration: none
+    cursor: pointer;
+}
+
+a:focus, a:hover {
+    color: #23527c;
+    text-decoration: underline
+}
+
+.logout {
+    right: 200px;
+}
+
+

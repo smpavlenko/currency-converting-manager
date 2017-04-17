@@ -15,7 +15,9 @@
         <form id="logoutForm" method="POST" action="${contextPath}/logout">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         </form>
-
+        <div class="logout">
+            <h4 class="text-right">Welcome ${pageContext.request.userPrincipal.name} <a href="#" onclick="document.forms['logoutForm'].submit()">Logout</a></h4>
+        </div>
     </c:if>
 
     <c:if test="${!empty recentExchanges}">
