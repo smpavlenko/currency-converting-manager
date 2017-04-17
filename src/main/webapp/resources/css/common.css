@@ -118,6 +118,29 @@ body {
 
 .form-group {
     margin-bottom: 15px
+    font-size: 18px;
+}
+
+.currency {
+    width: 70px;
+    font-size: 18px;
+    display: inline-table;
+}
+
+.exchangeRateTable {
+    border: 1px solid #ccc;
+    font-size: 18px;
+    margin: 15px;
+    height: 35px;
+    width: 500px;
+}
+
+.exchangeRateTable th {
+    border: 1px solid #ccc;
+}
+.exchangeRateTable td {
+    border: 1px solid #ccc;
+    text-align: center;
 }
 
 a {
@@ -135,4 +158,7 @@ a:focus, a:hover {
     right: 200px;
 }
 
+.text-right {
+    text-align: right
+}
 

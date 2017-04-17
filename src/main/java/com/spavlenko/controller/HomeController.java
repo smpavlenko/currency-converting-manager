@@ -1,7 +1,11 @@
 package com.spavlenko.controller;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,7 +26,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponents;
 
 import com.spavlenko.controller.mapper.UserMapper;
+import com.spavlenko.controller.request.ExchangeRatesRequest;
 import com.spavlenko.controller.request.UserRequest;
+import com.spavlenko.domain.Currency;
 import com.spavlenko.domain.User;
 import com.spavlenko.dto.ExchangeRateDto;
 import com.spavlenko.dto.UserDto;
@@ -48,6 +54,11 @@ public class HomeController {
 
     private final static RestTemplate REST_TEMPLATE = new RestTemplate();
 
+    @ModelAttribute("currencies")
+    public List<Currency> currencies() {
+        return Arrays.stream(Currency.values()).collect(Collectors.toList());
+    }
+
     @RequestMapping("/")
     public String home() {
         return "redirect:/currency-converter";
@@ -67,8 +78,29 @@ public class HomeController {
         List<ExchangeRateDto> exchangeRateList = response.getBody();
 
         model.addAttribute("recentExchanges", exchangeRateList);
+        model.addAttribute("exchangeRatesRequest", new ExchangeRatesRequest(Currency.EUR, Currency.USD));
         return "currency-converter";
 
+    }
+
+    @RequestMapping(value = "/currency-converter", method = RequestMethod.POST)
+    public String currencyConverter(@ModelAttribute("exchangeRatesRequest") ExchangeRatesRequest exchangeRatesRequest,
+            HttpServletRequest request, BindingResult bindingResult, Model model) {
+        User authenticatedUser = securityService.getAuthenticatedUser();
+        Long curentUserId = Optional.ofNullable(authenticatedUser).map(User::getId).orElse(0L);
+
+        UriComponents url = ServletUriComponentsBuilder.fromServletMapping(request)
+                .path("/v1/rates/")
+                .path(curentUserId.toString())
+                .path("/currencies/")
+                .path(exchangeRatesRequest.getFrom().name())
+                .path("/currencies/")
+                .path(exchangeRatesRequest.getTo().name())
+                .build();
+        HttpEntity<Void> requestEntity = buildHttpEntityWithSession(request);
+
+        REST_TEMPLATE.exchange(url.toString(), HttpMethod.GET, requestEntity, Object.class);
+        return "redirect:/currency-converter";
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)

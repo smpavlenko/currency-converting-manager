@@ -1,5 +1,6 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 
@@ -14,11 +15,25 @@
     <c:if test="${pageContext.request.userPrincipal.name != null}">
         <form id="logoutForm" method="POST" action="${contextPath}/logout">
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <div class="form-group">
+               <h4 class="text-right">Welcome ${pageContext.request.userPrincipal.name} <button class="btn btn-lg btn-primary" type="submit">Log Out</button></h4>
+            </div>
         </form>
-        <div class="logout">
-            <h4 class="text-right">Welcome ${pageContext.request.userPrincipal.name} <a href="#" onclick="document.forms['logoutForm'].submit()">Logout</a></h4>
-        </div>
     </c:if>
+
+    <form:form method="POST" modelAttribute="exchangeRatesRequest" class="form-signin">
+        <spring:bind path="from">
+            <div class="form-group">
+                <span class="currency">From</span><form:select path="from" items="${currencies}"/>
+            </div>
+        </spring:bind>
+        <spring:bind path="to">
+            <div class="form-group">
+                <span class="currency">To</span><form:select path="to" items="${currencies}"/>
+            </div>
+        </spring:bind>
+        <button id="getRate" class="btn btn-lg btn-primary" type="submit">Get Rate</button>
+    </form:form>
 
     <c:if test="${!empty recentExchanges}">
         <center>
@@ -31,7 +46,7 @@
                 </tr>
 
                 <c:forEach items="${recentExchanges}" var="exchangeRate">
-                    <tr class="currencyHistoryRate" id="${exchangeRate.id}" onclick="setUpdateForm('${exchangeRate.id}');">
+                    <tr id="${exchangeRate.id}">
                         <td><c:out value="${exchangeRate.from}"/></td>
                         <td><c:out value="${exchangeRate.to}"/></td>
                         <td><c:out value="${exchangeRate.rate}"/></td>
