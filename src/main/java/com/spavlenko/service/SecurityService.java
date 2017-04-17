@@ -1,7 +1,6 @@
 package com.spavlenko.service;
 
 import com.spavlenko.domain.User;
-import com.spavlenko.exception.EntityNotFoundException;
 
 /**
  * Security service for security purposes.
@@ -15,10 +14,8 @@ public interface SecurityService {
      * Returns authenticated user
      * 
      * @return authenticated user
-     * @throws EntityNotFoundException
-     *             if user not found
      */
-    User getAuthenticatedUser() throws EntityNotFoundException;
+    User getAuthenticatedUser();
 
     /**
      * Logs in an user
@@ -27,7 +24,6 @@ public interface SecurityService {
      *            user name
      * @param password
      *            user password
-     * @throws EntityNotFoundException
      */
     void login(String userName, String password);
 }

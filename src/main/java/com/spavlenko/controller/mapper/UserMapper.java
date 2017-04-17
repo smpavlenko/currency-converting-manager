@@ -21,6 +21,11 @@ public interface UserMapper {
      */
     @Mapping(target = "userName", source = "username")
     UserDto toUserDto(User user);
+    
+    /**
+     * UserRequest -> UserDto mapping
+     */
+    UserDto toUserDto(UserRequest userRequest);
 
     /**
      * UserDto -> User mapping

@@ -29,7 +29,7 @@ import com.spavlenko.service.UserService;
  *
  */
 @RestController
-@RequestMapping("v1/rates")
+@RequestMapping("/v1/rates")
 public class ExchangeRatesController {
 
     @Autowired
@@ -40,7 +40,7 @@ public class ExchangeRatesController {
     @Autowired
     private ExchangeRateMapper exchangeRateMapper;
 
-    @GetMapping("/{userId}/{from}/{to}")
+    @GetMapping("/{userId}/currencies/{from}/currencies/{to}")
     public ExchangeRateDto createAndGetRate(@Valid @PathVariable Long userId, @Valid @PathVariable Currency from,
             @Valid @PathVariable Currency to) throws EntityNotFoundException, ConstraintsViolationException {
         User user = userService.find(userId);
@@ -59,7 +59,7 @@ public class ExchangeRatesController {
         return exchangeRateMapper.toExchangeRateDtoList(exchangeRateService.getRecent(user));
     }
 
-    @GetMapping("/{from}/{to}")
+    @GetMapping("/{from}/currencies/{to}")
     public List<ExchangeRateDto> getRecentRates(@Valid @PathVariable Currency from, @Valid @PathVariable Currency to) {
         return exchangeRateMapper.toExchangeRateDtoList(exchangeRateService.find(from, to));
     }

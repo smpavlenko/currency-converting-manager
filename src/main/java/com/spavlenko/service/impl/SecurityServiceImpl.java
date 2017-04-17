@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import com.spavlenko.exception.EntityNotFoundException;
 import com.spavlenko.service.SecurityService;
 import com.spavlenko.service.UserService;
 
@@ -32,7 +31,7 @@ public class SecurityServiceImpl implements SecurityService {
     private UserDetailsService userDetailsService;
 
     @Override
-    public com.spavlenko.domain.User getAuthenticatedUser() throws EntityNotFoundException {
+    public com.spavlenko.domain.User getAuthenticatedUser() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userService.find(user.getUsername());
     }
