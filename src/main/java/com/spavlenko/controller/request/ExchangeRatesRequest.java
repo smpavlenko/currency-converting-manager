@@ -12,6 +12,7 @@ public class ExchangeRatesRequest {
 
     private Currency from;
     private Currency to;
+    private String action;
 
     public ExchangeRatesRequest() {
     }
@@ -35,6 +36,14 @@ public class ExchangeRatesRequest {
 
     public void setTo(Currency to) {
         this.to = to;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 
 }

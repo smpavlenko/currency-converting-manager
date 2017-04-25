@@ -66,8 +66,7 @@ public class HomeController {
 
     @RequestMapping(value = { "/currency-converter" }, method = RequestMethod.GET)
     public String currencyConverter(Model model, HttpServletRequest request) throws EntityNotFoundException {
-        User authenticatedUser = securityService.getAuthenticatedUser();
-        Long curentUserId = Optional.ofNullable(authenticatedUser).map(User::getId).orElse(0L);
+        Long curentUserId = getLogedUserId();
 
         UriComponents url = ServletUriComponentsBuilder.fromServletMapping(request).path("/v1/rates/")
                 .path(curentUserId.toString()).build();
@@ -81,15 +80,25 @@ public class HomeController {
         model.addAttribute("recentExchanges", exchangeRateList);
         model.addAttribute("exchangeRatesRequest", new ExchangeRatesRequest(Currency.EUR, Currency.USD));
         return "currency-converter";
+    }
 
+    @RequestMapping(value = { "/history" }, method = RequestMethod.GET)
+    public String history(Model model, HttpServletRequest request) throws EntityNotFoundException {
+        Long curentUserId = getLogedUserId();
+
+        // TODO to implement
+        return "history";
     }
 
     @RequestMapping(value = "/currency-converter", method = RequestMethod.POST)
     public String currencyConverter(@ModelAttribute("exchangeRatesRequest") ExchangeRatesRequest exchangeRatesRequest,
             HttpServletRequest request, BindingResult bindingResult, Model model) {
-        User authenticatedUser = securityService.getAuthenticatedUser();
-        Long curentUserId = Optional.ofNullable(authenticatedUser).map(User::getId).orElse(0L);
+        if("history".equals(exchangeRatesRequest.getAction())){
+            return "redirect:/history";
+        }
 
+        Long curentUserId = getLogedUserId();
+        
         UriComponents url = ServletUriComponentsBuilder.fromServletMapping(request)
                 .path("/v1/rates/")
                 .path(curentUserId.toString())
@@ -102,6 +111,11 @@ public class HomeController {
 
         REST_TEMPLATE.exchange(url.toString(), HttpMethod.GET, requestEntity, Object.class);
         return "redirect:/currency-converter";
+    }
+
+    private Long getLogedUserId() {
+        User authenticatedUser = securityService.getAuthenticatedUser();
+        return Optional.ofNullable(authenticatedUser).map(User::getId).orElse(0L);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)

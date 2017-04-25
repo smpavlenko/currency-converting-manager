@@ -34,7 +34,8 @@
                 <span class="currency">To</span><form:select path="to" items="${currencies}"/>
             </div>
         </spring:bind>
-        <button id="getRate" class="btn btn-lg btn-primary" type="submit">Get Rate</button>
+        <button id="getRate" class="btn btn-lg btn-primary" name="action" value="rate" type="submit">Get Rate</button>
+        <button id="getHistory" class="btn btn-lg btn-primary" name="action" value="history" type="submit">History</button>
     </form:form>
 
     <c:if test="${!empty recentExchanges}">
