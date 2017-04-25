@@ -1,6 +1,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 
@@ -22,6 +23,7 @@
     </c:if>
 
     <form:form method="POST" modelAttribute="exchangeRatesRequest" class="form-signin">
+        <div class="form-group"><h4>Get currency exchange rate:</h4></div>
         <spring:bind path="from">
             <div class="form-group">
                 <span class="currency">From</span><form:select path="from" items="${currencies}"/>
@@ -37,6 +39,7 @@
 
     <c:if test="${!empty recentExchanges}">
         <center>
+            <div class="form-group"><h4>History of ${pageContext.request.userPrincipal.name}'s requests:</h4></div>
             <table class="exchangeRateTable">
                 <tr>
                     <th>From</th>
@@ -50,7 +53,12 @@
                         <td><c:out value="${exchangeRate.from}"/></td>
                         <td><c:out value="${exchangeRate.to}"/></td>
                         <td><c:out value="${exchangeRate.rate}"/></td>
-                        <td><c:out value="${exchangeRate.dateCreated.month}"/></td>
+                        <td>
+                        <c:out value="${exchangeRate.dateCreated.dayOfMonth}"/>
+                        <c:out value="${exchangeRate.dateCreated.month}"/>
+                        <c:out value="${exchangeRate.dateCreated.year}"/>
+                        <c:out value="${exchangeRate.dateCreated.hour}"/>:<c:out value="${exchangeRate.dateCreated.minute}"/>:<c:out value="${exchangeRate.dateCreated.second}"/>
+                        </td>
                     </tr>
                 </c:forEach>
             </table>

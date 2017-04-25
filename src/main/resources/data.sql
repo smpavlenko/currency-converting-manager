@@ -4,8 +4,9 @@
 
  -- Create test users
 
-insert into user (id, date_created, username, password) values (1, now(), 'test1', 'test1');
+insert into user (id, date_created, username, password) values (1, now(), 'cron', 'cron');
 insert into user (id, date_created, username, password) values (2, now(), 'test2', 'test2');
+insert into user (id, date_created, username, password) values (3, now(), 'test3', 'test3');
 
 -- Create test exchange rates
 

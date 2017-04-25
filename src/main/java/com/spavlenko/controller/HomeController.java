@@ -75,6 +75,7 @@ public class HomeController {
 
         ResponseEntity<List> response = REST_TEMPLATE.exchange(url.toString(), HttpMethod.GET, requestEntity,
                 List.class);
+        
         List<ExchangeRateDto> exchangeRateList = response.getBody();
 
         model.addAttribute("recentExchanges", exchangeRateList);
