@@ -31,14 +31,12 @@ public interface UserMapper {
      * UserDto -> User mapping
      */
     @Mapping(target = "username", source = "userName")
-    @Mapping(target = "dateCreated", ignore = false)
     User toUser(UserDto userDto);
 
     /**
      * UserRequest -> User mapping
      */
     @Mapping(target = "username", source = "userName")
-    @Mapping(target = "dateCreated", ignore = false)
     User toUser(UserRequest userRequest);
 
 }
