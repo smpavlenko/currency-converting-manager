@@ -2,6 +2,8 @@ package com.spavlenko.service.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,7 @@ import com.spavlenko.service.RateGatewayService;
 /**
  * Implementation of RateGatewayService which uses Open Exchange third party
  * service to convert one currency to another. https://openexchangerates.org
- * 
+ *
  * @author sergii.pavlenko
  * @since Apr 9, 2017
  */
@@ -24,13 +26,26 @@ public class OpenExchangeRateGatewayService implements RateGatewayService {
 
     @Override
     public BigDecimal retrieveExchangeRate(Currency from, Currency to) {
+        Map<Currency, BigDecimal> map = retrieveExchangeRates();
+        BigDecimal valueFrom = map.get(from);
+        BigDecimal valueTo = map.get(to);
+
+        return valueTo.divide(valueFrom, 5, RoundingMode.HALF_UP);
+    }
+
+    @Override
+    public Map<Currency, BigDecimal> retrieveExchangeRates() {
         String body = REST_TEMPLATE.getForObject(URL, String.class);
         JSONObject json = new JSONObject(body);
         JSONObject rates = (JSONObject) json.get("rates");
-        Double valueFrom = Double.valueOf(rates.get(from.name()).toString());
-        Double valueTo = Double.valueOf(rates.get(to.name()).toString());
 
-        return BigDecimal.valueOf(valueTo).divide(BigDecimal.valueOf(valueFrom), 5, RoundingMode.HALF_UP);
+        Map<Currency, BigDecimal> result = new HashMap<>();
+        for (Currency currency : Currency.values()) {
+            Double currencyRate = Double.valueOf(rates.get(currency.name()).toString());
+            result.put(currency, BigDecimal.valueOf(currencyRate));
+        }
+
+        return result;
     }
 
 }
