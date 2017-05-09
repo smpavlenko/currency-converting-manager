@@ -1,7 +1,5 @@
 package com.spavlenko.controller;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponents;
 
 import com.spavlenko.controller.mapper.UserMapper;
@@ -83,18 +84,32 @@ public class HomeController {
     }
 
     @RequestMapping(value = { "/history" }, method = RequestMethod.GET)
-    public String history(Model model, HttpServletRequest request) throws EntityNotFoundException {
-        Long curentUserId = getLogedUserId();
+    public String history(@ModelAttribute("exchangeRatesRequest") ExchangeRatesRequest exchangeRatesRequest,
+            Model model, HttpServletRequest request) throws EntityNotFoundException {
+        UriComponents url = ServletUriComponentsBuilder.fromServletMapping(request)
+                .path("/v1/rates/")
+                .path(exchangeRatesRequest.getFrom().name())
+                .path("/currencies/")
+                .path(exchangeRatesRequest.getTo().name())
+                .build();
+        HttpEntity<Void> requestEntity = buildHttpEntityWithSession(request);
 
-        // TODO to implement
+        ResponseEntity<List> response = REST_TEMPLATE.exchange(url.toString(), HttpMethod.GET, requestEntity,
+                List.class);
+        
+        List<ExchangeRateDto> exchangeRateList = response.getBody();
+        model.addAttribute("recentExchanges", exchangeRateList);
         return "history";
     }
 
     @RequestMapping(value = "/currency-converter", method = RequestMethod.POST)
-    public String currencyConverter(@ModelAttribute("exchangeRatesRequest") ExchangeRatesRequest exchangeRatesRequest,
-            HttpServletRequest request, BindingResult bindingResult, Model model) {
+    public ModelAndView currencyConverter(@ModelAttribute("exchangeRatesRequest") ExchangeRatesRequest exchangeRatesRequest,
+            HttpServletRequest request, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
         if("history".equals(exchangeRatesRequest.getAction())){
-            return "redirect:/history";
+//            redirectAttributes.addAttribute("exchangeRatesRequest", exchangeRatesRequest);
+            ModelAndView modelAndView=new ModelAndView("redirect:/history");
+            modelAndView.addObject("exchangeRatesRequest", exchangeRatesRequest);
+            return modelAndView;
         }
 
         Long curentUserId = getLogedUserId();
@@ -110,7 +125,8 @@ public class HomeController {
         HttpEntity<Void> requestEntity = buildHttpEntityWithSession(request);
 
         REST_TEMPLATE.exchange(url.toString(), HttpMethod.GET, requestEntity, Object.class);
-        return "redirect:/currency-converter";
+//        return "redirect:/currency-converter";
+        return new ModelAndView("redirect:/currency-converter");
     }
 
     private Long getLogedUserId() {
