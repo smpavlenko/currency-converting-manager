@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/smpavlenko/currency-converting-manager.svg?branch=master)](https://travis-ci.org/smpavlenko/currency-converting-manager)
 # Currency Converting Manager
 
 Currency converting application which uses third party currency converter API (https://openexchangerates.org).
