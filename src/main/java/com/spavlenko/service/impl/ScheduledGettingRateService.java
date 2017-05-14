@@ -44,7 +44,7 @@ public class ScheduledGettingRateService {
     private class PollingTask implements Runnable {
         @Override
         public void run() {
-            User user = userRepository.findByUsername("test2");
+            User user = userRepository.findByUsername("cron");
             Map<Currency, BigDecimal> map = rateGatewayService.retrieveExchangeRates();
 
             for (Currency from : Currency.values()) {
