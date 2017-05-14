@@ -23,7 +23,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.util.UriComponents;
 
 import com.spavlenko.controller.mapper.UserMapper;
