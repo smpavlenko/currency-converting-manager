@@ -7,6 +7,9 @@ import java.util.Map;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -28,11 +31,11 @@ public class OpenExchangeRateGatewayService implements RateGatewayService {
     private String gatewayUrl;
 
     @Override
+    @Cacheable(cacheNames = "exchangeRates")
     public BigDecimal retrieveExchangeRate(Currency from, Currency to) {
         Map<Currency, BigDecimal> map = retrieveExchangeRates();
         BigDecimal valueFrom = map.get(from);
         BigDecimal valueTo = map.get(to);
-
         return valueTo.divide(valueFrom, 5, RoundingMode.HALF_UP);
     }
 
@@ -49,6 +52,12 @@ public class OpenExchangeRateGatewayService implements RateGatewayService {
         }
 
         return result;
+    }
+
+    @CacheEvict(value = "exchangeRates", allEntries = true)
+    @Scheduled(fixedDelay = 24 * 60 * 60 * 1000, initialDelay = 100)
+    public void evictAllCaches() {
+        // clears cache once a day
     }
 
 }

@@ -2,6 +2,7 @@ package com.spavlenko;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -18,6 +19,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  * @author sergii.pavlenko
  * @since March 28, 2017
  */
+@EnableCaching
 @EnableSwagger2
 @SpringBootApplication
 public class CurrencyConverterApplication extends WebMvcConfigurerAdapter {
