@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -21,8 +22,10 @@ import com.spavlenko.service.RateGatewayService;
  */
 @Service
 public class OpenExchangeRateGatewayService implements RateGatewayService {
-    private final static String URL = "https://openexchangerates.org/api/latest.json?app_id=f68803a64b2d41b98ba0a246fc24f03c";
     private final static RestTemplate REST_TEMPLATE = new RestTemplate();
+
+    @Value("${rateGateway.url}")
+    private String gatewayUrl;
 
     @Override
     public BigDecimal retrieveExchangeRate(Currency from, Currency to) {
@@ -35,7 +38,7 @@ public class OpenExchangeRateGatewayService implements RateGatewayService {
 
     @Override
     public Map<Currency, BigDecimal> retrieveExchangeRates() {
-        String body = REST_TEMPLATE.getForObject(URL, String.class);
+        String body = REST_TEMPLATE.getForObject(gatewayUrl, String.class);
         JSONObject json = new JSONObject(body);
         JSONObject rates = (JSONObject) json.get("rates");
 
